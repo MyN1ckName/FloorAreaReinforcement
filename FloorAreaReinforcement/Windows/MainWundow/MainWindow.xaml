@@ -1,0 +1,106 @@
+﻿<Window x:Class="FloorAreaReinforcement.Windows.MainWundow.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+        xmlns:local="clr-namespace:FloorAreaReinforcement.Windows.MainWundow"
+        mc:Ignorable="d"
+        d:DesignHeight="300" d:DesignWidth="300"
+        WindowStartupLocation="CenterScreen"
+        Name="Win">
+
+    <Window.Resources>
+        <Style TargetType="Button">
+            <Setter Property="Height" Value="25"/>
+            <Setter Property="Width" Value="100"/>
+            <Setter Property="Margin" Value="5"/>
+        </Style>      
+    </Window.Resources>
+
+    <Grid>
+        <DataGrid ItemsSource="{Binding RebarAreaList}"
+                  SelectedItem="{Binding SelectedRebarArea, UpdateSourceTrigger=PropertyChanged}"
+                  AutoGenerateColumns="False">
+
+            <DataGrid.Resources>
+                <Style TargetType="{x:Type DataGridCell}">
+                    <Style.Triggers>
+                        <Trigger Property="DataGridCell.IsSelected" Value="True">
+                            <Setter Property="Background" Value="#FFD8DFF0" />
+                            <Setter Property="Foreground" Value="Black" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+                
+                <Style TargetType="RadioButton">
+                    <Setter Property="FontSize" Value="12"/>
+                </Style>
+            </DataGrid.Resources>
+            
+            <DataGrid.Columns>
+
+                <DataGridTemplateColumn Header="Yes / No">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <CheckBox IsChecked="{Binding Path=IsChecked, UpdateSourceTrigger=PropertyChanged}"
+                                      HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTextColumn Header="Name" IsReadOnly="True" Binding="{Binding Path=AreaReinforcementType.Name}"/>
+
+                <DataGridTemplateColumn Header="RebarBarType" IsReadOnly="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <ComboBox IsReadOnly="True" ItemsSource="{Binding AvailableRebarBarType}"
+                                      SelectedItem="{Binding RebarBarType, UpdateSourceTrigger=PropertyChanged}">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Name}"/>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="Spacing" IsReadOnly="False">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBox Text="{Binding Spacing, UpdateSourceTrigger=PropertyChanged}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="AlongRebarCover" IsReadOnly="False">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBox Text="{Binding AlongRebarCover, UpdateSourceTrigger=PropertyChanged}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                
+                <!--
+                <DataGridTemplateColumn Header="Major or Minor" IsReadOnly="False">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Vertical">
+                                <RadioButton GroupName="{Binding Path=AreaReinforcementType.Name}" Content="Major" IsChecked="{Binding IsMajor, UpdateSourceTrigger=PropertyChanged}"/>
+                                <RadioButton GroupName="{Binding Path=AreaReinforcementType.Name}" Content="Minor" IsChecked="{Binding IsMinor, UpdateSourceTrigger=PropertyChanged}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                -->
+
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="OK" Command="{Binding Ok}" CommandParameter="{Binding ElementName=Win}"/>
+            <Button Content="Cancel" Command="{Binding Close}" CommandParameter="{Binding ElementName=Win}"/>
+        </StackPanel>
+
+    </Grid>
+</Window>
