@@ -57,6 +57,7 @@
     <Compile Include="Command.cs" />
     <Compile Include="Models\CreateRebarArea.cs" />
     <Compile Include="Models\Direction.cs" />
+    <Compile Include="Models\DoubleExtensions.cs" />
     <Compile Include="Models\RebarArea.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Models\FloorPickFilter.cs" />

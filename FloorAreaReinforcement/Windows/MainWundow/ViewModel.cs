@@ -21,10 +21,12 @@ namespace FloorAreaReinforcement.Windows.MainWundow
 	class ViewModel : INotifyPropertyChanged
 	{
 		Document doc;
+		Floor floor;
 		ObservableCollection<Models.RebarArea> rebarAreaList =
 			new ObservableCollection<Models.RebarArea>();
 		public ViewModel(Floor floor)
 		{
+			this.floor = floor;
 			doc = floor.Document;
 			rebarAreaList = CreateRebarAreaList(floor);
 		}
@@ -75,12 +77,15 @@ namespace FloorAreaReinforcement.Windows.MainWundow
 						using (TransactionGroup tg = new TransactionGroup(doc,
 							"Create Rebar Area"))
 						{
+							XYZ majorDirection =
+							Models.CreateRebarArea.GetMajorDirection(floor);
+
 							tg.Start();
 							foreach (Models.RebarArea rebarArea in rebarAreaList)
 							{
 								if (rebarArea.IsChecked)
 								{
-									Models.CreateRebarArea.Create(rebarArea);
+									Models.CreateRebarArea.Create(rebarArea,majorDirection);
 								}
 							}
 							tg.Assimilate();
@@ -91,10 +96,6 @@ namespace FloorAreaReinforcement.Windows.MainWundow
 					{
 						MessageBox.Show(ex.Message, "Ошибка");
 					}
-				},
-				obj =>
-				{
-					return true;
 				}));
 			}
 		}
@@ -115,10 +116,6 @@ namespace FloorAreaReinforcement.Windows.MainWundow
 					{
 						MessageBox.Show(ex.Message, "Ошибка");
 					}
-				},
-				obj =>
-				{
-					return true;
 				}));
 			}
 		}

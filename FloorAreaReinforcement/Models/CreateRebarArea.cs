@@ -17,16 +17,19 @@ namespace FloorAreaReinforcement.Models
 	public static class CreateRebarArea
 	{
 		const double mmToft = 0.00328084;
+		const double epsilon = 0.001;
 
 		// TODO: назначение стадии по хосту?
 
 		// Создание арматурной сетки по параметрам обьекта RebarArea rebarArea
-		public static AreaReinforcement Create(Models.RebarArea rebarArea)
+		public static AreaReinforcement Create(Models.RebarArea rebarArea,
+			XYZ majorDirection)
 		{
 			Document doc = rebarArea.Document;
 			Element hostElement = rebarArea.Host;
 			IList<Curve> curveArray = GetCurveArray(hostElement);
-			XYZ majorDirection = GetMajorDirection(curveArray);
+			//XYZ majorDirection = majorDirection;
+			//XYZ majorDirection = new XYZ(0, 1, 0);
 			ElementId areaReinforcementTypeId = rebarArea.AreaReinforcementType.Id;
 
 			ElementId rebarBarTypeId;
@@ -77,16 +80,40 @@ namespace FloorAreaReinforcement.Models
 
 		// TODO: Поправить GetMajorDirection в зависемости от direction
 		// Получение главного направления армирования
-		static XYZ GetMajorDirection(IList<Curve> curves)
+		public static XYZ GetMajorDirection(Element e)
 		{
-			Line firstLine = (Line)(curves[0]);
+			AnalyticalModel analyticalModel = e.GetAnalyticalModel() as AnalyticalModel;
+			if (null == analyticalModel)
+			{
+				throw new Exception("Can't get AnalyticalModel from the selected Floor");
+			}
 
-			XYZ majorDirection = new XYZ(
-				firstLine.GetEndPoint(1).X - firstLine.GetEndPoint(0).X,
-				firstLine.GetEndPoint(1).Y - firstLine.GetEndPoint(0).Y,
-				firstLine.GetEndPoint(1).Z - firstLine.GetEndPoint(0).Z);
+			IList<Curve> curves = analyticalModel.GetCurves(AnalyticalCurveType
+				.ActiveCurves);
 
-			return majorDirection;
+			XYZ direction = new XYZ(0, 1, 0);
+
+			List<Line> lines = new List<Line>();
+
+			foreach (Line line in curves)
+			{
+				if ((line.Direction.X > 0 || line.Direction.X.EqualTo(0, epsilon))
+					&&
+					(line.Direction.Y > 0 || line.Direction.Y.EqualTo(0, epsilon)))
+				{
+					lines.Add(line);
+				}
+			}
+
+			foreach (Line line in lines)
+			{
+				if (line.Direction.X.EqualTo(direction.X, epsilon) &&
+					line.Direction.Y.EqualTo(direction.Y, epsilon))
+				{
+					return direction;
+				}
+			}
+			return lines.First().Direction;
 		}
 
 		// Назначение параметров для RebarBarType
