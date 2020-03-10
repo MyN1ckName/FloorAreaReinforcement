@@ -43,11 +43,13 @@ namespace FloorAreaReinforcement.Windows.MainWundow
 			return rebarAreaList;
 		}
 
+		// Коллекция типаразмеров армирования
 		public ObservableCollection<Models.RebarArea> RebarAreaList
 		{
 			get { return rebarAreaList; }
 		}
 
+		// Выбранный элемент из RebarAreaList
 		private Models.RebarArea selectedRebarArea;
 		public Models.RebarArea SelectedRebarArea
 		{

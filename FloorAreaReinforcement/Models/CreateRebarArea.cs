@@ -20,6 +20,7 @@ namespace FloorAreaReinforcement.Models
 
 		// TODO: назначение стадии по хосту?
 
+		// Создание арматурной сетки по параметрам обьекта RebarArea rebarArea
 		public static AreaReinforcement Create(Models.RebarArea rebarArea)
 		{
 			Document doc = rebarArea.Document;
@@ -59,6 +60,8 @@ namespace FloorAreaReinforcement.Models
 
 		// TODO: Поправить GetCurveArray в зависемости от direction
 		// TODO: продольный защитный слой
+
+		// Получение контура армирования из аналитической модели плиты
 		static IList<Curve> GetCurveArray(Element e)
 		{
 			AnalyticalModel analyticalModel = e.GetAnalyticalModel() as AnalyticalModel;
@@ -73,6 +76,7 @@ namespace FloorAreaReinforcement.Models
 		}
 
 		// TODO: Поправить GetMajorDirection в зависемости от direction
+		// Получение главного направления армирования
 		static XYZ GetMajorDirection(IList<Curve> curves)
 		{
 			Line firstLine = (Line)(curves[0]);
@@ -85,6 +89,7 @@ namespace FloorAreaReinforcement.Models
 			return majorDirection;
 		}
 
+		// Назначение параметров для RebarBarType
 		private static AreaReinforcement SetDirectionAndSpacing(
 			AreaReinforcement areaReinforcement, RebarArea rebarArea)
 		{

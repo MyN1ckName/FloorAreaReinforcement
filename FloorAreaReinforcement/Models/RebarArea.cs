@@ -98,6 +98,7 @@ namespace FloorAreaReinforcement.Models
 			return direction;
 		}
 
+		// Назначение типаразмера армирования
 		private AreaReinforcementType SetAreaReinforcementType(Document doc, string name)
 		{
 			FilteredElementCollector collector = new FilteredElementCollector(doc);
@@ -120,6 +121,8 @@ namespace FloorAreaReinforcement.Models
 			get { return availableRebarBarType; }
 		}
 
+		// Получение доступных типаразмеров арматуры (RebarBarType)
+		// в зависимости от типаразмера армирования (AreaReinforcementType)
 		private List<RebarBarType> GetAvailableRebarBarType(Document doc)
 		{
 			List<RebarBarType> availableRebarBarType = new List<RebarBarType>();
@@ -136,6 +139,7 @@ namespace FloorAreaReinforcement.Models
 			return availableRebarBarType;
 		}
 
+		// Фильт для типаразмеров арматуры по имени
 		private bool IsValidRebarBarType(RebarBarType rebarBarType)
 		{
 			string pattern = @"\w*";
