@@ -66,7 +66,9 @@
     <Compile Include="Windows\MainWundow\ViewModel.cs" />
     <Compile Include="Windows\RelayCommand .cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Windows\MainWundow\img\construction_worker.png" />
+  </ItemGroup>
   <ItemGroup>
     <Page Include="Windows\MainWundow\MainWindow.xaml">
       <SubType>Designer</SubType>

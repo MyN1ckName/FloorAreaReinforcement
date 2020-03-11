@@ -25,9 +25,11 @@ namespace FloorAreaReinforcement.Models
 		{
 			Document doc = rebarArea.Document;
 			Element hostElement = rebarArea.Host;
-			IList<Curve> curveArray = GetCurveArray(rebarArea, majorDirection);
-			ElementId areaReinforcementTypeId = rebarArea.AreaReinforcementType.Id;
 
+			//IList<Curve> curveArray = GetCurveArray(rebarArea, majorDirection);
+			IList<Curve> curveArray = GetCurveArray2(rebarArea, majorDirection);
+
+			ElementId areaReinforcementTypeId = rebarArea.AreaReinforcementType.Id;
 			ElementId rebarBarTypeId;
 			if (rebarArea.RebarBarType != null)
 			{
@@ -57,20 +59,8 @@ namespace FloorAreaReinforcement.Models
 			}
 		}
 
+		#region Старый способ получить контур
 		// Получение контура армирования из аналитической модели плиты
-		static IList<Curve> GetCurveArray(Element e)
-		{
-			AnalyticalModel analyticalModel = e.GetAnalyticalModel() as AnalyticalModel;
-			if (null == analyticalModel)
-			{
-				throw new Exception("Can't get AnalyticalModel from the selected Floor");
-			}
-
-			IList<Curve> curves = analyticalModel.GetCurves(AnalyticalCurveType
-				.ActiveCurves);
-			return curves;
-		}
-
 		static IList<Curve> GetCurveArray(RebarArea rebarArea, XYZ majorDirection)
 		{
 			Floor floor = rebarArea.Host;
@@ -118,8 +108,6 @@ namespace FloorAreaReinforcement.Models
 				}
 			}
 
-			// TODO: Перед получением точек линии нужно сместить на продольный защитный слой
-
 			List<XYZ> points = new List<XYZ>();
 			double offset = (rebarArea.AlongRebarCover * mmToft) - (rebarArea.RebarBarType.BarDiameter / 2);
 			foreach (Line line in lines)
@@ -137,7 +125,6 @@ namespace FloorAreaReinforcement.Models
 			}
 			return newLines;
 		}
-
 		private static XYZ AddAlongRebarCover(XYZ point, XYZ lineDirection, double offset)
 		{
 			XYZ p = new XYZ(
@@ -146,7 +133,80 @@ namespace FloorAreaReinforcement.Models
 				point.Z);
 			return p;
 		}
+		#endregion
 
+		#region Новый способ получить контур
+		// Получение контура армирования из скетч-плана плиты
+		static IList<Curve> GetCurveArray2(RebarArea rebarArea, XYZ majorDirection)
+		{
+			Floor floor = rebarArea.Host;
+			Document doc = floor.Document;
+			Sketch floorSketch =
+				doc.GetElement(floor.GetDependentElements
+				(new ElementClassFilter(typeof(Sketch))).First()) as Sketch;
+
+			List<Line> lines = new List<Line>();
+			foreach (Line line in floorSketch.Profile.get_Item(0))
+			{
+				if (rebarArea.Direction == Direction.TopMajor ||
+					rebarArea.Direction == Direction.BottomMajor)
+				{
+					if ((line.Direction.X.EqualTo(majorDirection.X, epsilon)
+						&&
+						line.Direction.Y.EqualTo(majorDirection.Y, epsilon))
+						||
+						(line.Direction.Negate().X.EqualTo(majorDirection.X, epsilon)
+						&&
+						line.Direction.Negate().Y.EqualTo(majorDirection.Y, epsilon)))
+					{
+						lines.Add(line);
+					}
+				}
+
+				if (rebarArea.Direction == Direction.TopMinor ||
+					rebarArea.Direction == Direction.BottomMinor)
+				{
+					if ((line.Direction.X.EqualTo(majorDirection.Negate().Y, epsilon)
+						&&
+						line.Direction.Y.EqualTo(majorDirection.X, epsilon))
+						||
+						(line.Direction.Negate().X.EqualTo(majorDirection.Negate().Y, epsilon)
+						&&
+						line.Direction.Negate().Y.EqualTo(majorDirection.X, epsilon)))
+					{
+						lines.Add(line);
+					}
+				}
+			}
+
+			List<XYZ> points = new List<XYZ>();
+			double offset = (rebarArea.AlongRebarCover * mmToft) - (rebarArea.RebarBarType.BarDiameter / 2);
+			foreach (Line line in lines)
+			{
+				points.Add(AddAlongRebarCover2(line.GetEndPoint(0), line.Direction, offset));
+				points.Add(AddAlongRebarCover2(line.GetEndPoint(1), line.Direction, offset));
+			}
+
+			IList<Curve> newLines = new List<Curve>();
+			XYZ q = points[points.Count - 1];
+			foreach (XYZ p in points)
+			{
+				newLines.Add(Line.CreateBound(q, p));
+				q = p;
+			}
+			return newLines;
+		}
+
+		private static XYZ AddAlongRebarCover2(XYZ point, XYZ lineDirection, double offset)
+		{
+			XYZ p = new XYZ(
+				point.X + (lineDirection.Y * offset),
+				point.Y - (lineDirection.X * offset),
+				point.Z);
+			return p;
+		}
+		#endregion
+		
 		// Получение главного направления армирования
 		public static XYZ GetMajorDirection(Element e)
 		{

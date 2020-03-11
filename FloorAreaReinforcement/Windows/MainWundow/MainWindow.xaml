@@ -1,12 +1,10 @@
 ﻿<Window x:Class="FloorAreaReinforcement.Windows.MainWundow.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-        xmlns:local="clr-namespace:FloorAreaReinforcement.Windows.MainWundow"
-        mc:Ignorable="d"
-        d:DesignHeight="300" d:DesignWidth="300"
+        Height="190" Width="550"
         WindowStartupLocation="CenterScreen"
+        Title="Основное армирование плиты"
+        Icon="img/construction_worker.png"
         Name="Win">
 
     <Window.Resources>
@@ -14,74 +12,74 @@
             <Setter Property="Height" Value="25"/>
             <Setter Property="Width" Value="100"/>
             <Setter Property="Margin" Value="5"/>
-        </Style>      
+        </Style>
     </Window.Resources>
 
     <Grid>
-        <DataGrid ItemsSource="{Binding RebarAreaList}"
-                  SelectedItem="{Binding SelectedRebarArea, UpdateSourceTrigger=PropertyChanged}"
-                  AutoGenerateColumns="False">
+        <StackPanel Orientation="Vertical">
+            <DataGrid
+                ItemsSource="{Binding RebarAreaList}"
+                SelectedItem="{Binding SelectedRebarArea, UpdateSourceTrigger=PropertyChanged}"
+                AutoGenerateColumns="False"
+                FontSize="12" GridLinesVisibility="None"
+                HorizontalAlignment="Center" VerticalAlignment="Center" HeadersVisibility="None" Margin="5">
 
-            <DataGrid.Resources>
-                <Style TargetType="{x:Type DataGridCell}">
-                    <Style.Triggers>
-                        <Trigger Property="DataGridCell.IsSelected" Value="True">
-                            <Setter Property="Background" Value="#FFD8DFF0" />
-                            <Setter Property="Foreground" Value="Black" />
-                        </Trigger>
-                    </Style.Triggers>
-                </Style>
-                
-                <Style TargetType="RadioButton">
-                    <Setter Property="FontSize" Value="12"/>
-                </Style>
-            </DataGrid.Resources>
-            
-            <DataGrid.Columns>
+                <DataGrid.Resources>
+                    <Style TargetType="{x:Type DataGridCell}">
+                        <Style.Triggers>
+                            <Trigger Property="DataGridCell.IsSelected" Value="True">
+                                <Setter Property="Background" Value="{x:Null}" />
+                                <Setter Property="Foreground" Value="Black" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </DataGrid.Resources>
 
-                <DataGridTemplateColumn Header="Yes / No">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <CheckBox IsChecked="{Binding Path=IsChecked, UpdateSourceTrigger=PropertyChanged}"
-                                      HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
+                <DataGrid.Columns>
 
-                <DataGridTextColumn Header="Name" IsReadOnly="True" Binding="{Binding Path=AreaReinforcementType.Name}"/>
+                    <DataGridTemplateColumn Width="45">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <CheckBox IsChecked="{Binding Path=IsChecked, UpdateSourceTrigger=PropertyChanged}"
+                                          HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Header="RebarBarType" IsReadOnly="True">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <ComboBox IsReadOnly="True" ItemsSource="{Binding AvailableRebarBarType}"
-                                      SelectedItem="{Binding RebarBarType, UpdateSourceTrigger=PropertyChanged}">
-                                <ComboBox.ItemTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Text="{Binding Name}"/>
-                                    </DataTemplate>
-                                </ComboBox.ItemTemplate>
-                            </ComboBox>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
+                    <DataGridTextColumn IsReadOnly="True" Binding="{Binding Path=AreaReinforcementType.Name}" Width="80" CanUserSort="False"/>
 
-                <DataGridTemplateColumn Header="Spacing" IsReadOnly="False">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <TextBox Text="{Binding Spacing, UpdateSourceTrigger=PropertyChanged}"/>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
+                    <DataGridTemplateColumn IsReadOnly="True" Width="280" Header="Типоразмер арматуры">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <ComboBox IsReadOnly="True" ItemsSource="{Binding AvailableRebarBarType}"
+                                          SelectedItem="{Binding RebarBarType, UpdateSourceTrigger=PropertyChanged}">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Name}"/>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Header="AlongRebarCover" IsReadOnly="False">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <TextBox Text="{Binding AlongRebarCover, UpdateSourceTrigger=PropertyChanged}"/>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-                
-                <!--
+                    <DataGridTemplateColumn Header="Шаг" Width="50" IsReadOnly="False">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBox Text="{Binding Spacing, UpdateSourceTrigger=PropertyChanged}"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTemplateColumn Header="Отступ" IsReadOnly="False" Width="60">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBox Text="{Binding AlongRebarCover, UpdateSourceTrigger=PropertyChanged}"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <!--
                 <DataGridTemplateColumn Header="Major or Minor" IsReadOnly="False">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
@@ -94,13 +92,14 @@
                 </DataGridTemplateColumn>
                 -->
 
-            </DataGrid.Columns>
-        </DataGrid>
+                </DataGrid.Columns>
+            </DataGrid>
 
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button Content="OK" Command="{Binding Ok}" CommandParameter="{Binding ElementName=Win}"/>
-            <Button Content="Cancel" Command="{Binding Close}" CommandParameter="{Binding ElementName=Win}"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Content="OK" Command="{Binding Ok}" CommandParameter="{Binding ElementName=Win}"/>
+                <Button Content="Cancel" Command="{Binding Close}" CommandParameter="{Binding ElementName=Win}"/>
+            </StackPanel>
+
         </StackPanel>
-
     </Grid>
 </Window>
