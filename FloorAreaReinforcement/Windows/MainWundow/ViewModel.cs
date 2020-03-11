@@ -40,7 +40,6 @@ namespace FloorAreaReinforcement.Windows.MainWundow
 					new Models.RebarArea(floor, "Верхняя Y"),
 					new Models.RebarArea(floor, "Нижняя X"),
 					new Models.RebarArea(floor, "Нижняя Y")
-					//new Models.RebarArea(uidoc,"default")
 				};
 			return rebarAreaList;
 		}

@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
@@ -25,7 +21,6 @@ namespace FloorAreaReinforcement
 
 			try
 			{
-				//Models.Class1.Create(uiapp.ActiveUIDocument);
 				Floor floor = GetHost(uiapp.ActiveUIDocument);
 				Windows.MainWundow.MainWindow window = new Windows.MainWundow.MainWindow()
 				{

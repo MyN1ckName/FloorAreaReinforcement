@@ -17,9 +17,7 @@ namespace FloorAreaReinforcement.Models
 	public static class CreateRebarArea
 	{
 		const double mmToft = 0.00328084;
-		const double epsilon = 0.001;
-
-		// TODO: назначение стадии по хосту?
+		const double epsilon = 0.00001;
 
 		// Создание арматурной сетки по параметрам обьекта RebarArea rebarArea
 		public static AreaReinforcement Create(Models.RebarArea rebarArea,
@@ -27,9 +25,7 @@ namespace FloorAreaReinforcement.Models
 		{
 			Document doc = rebarArea.Document;
 			Element hostElement = rebarArea.Host;
-			IList<Curve> curveArray = GetCurveArray(hostElement);
-			//XYZ majorDirection = majorDirection;
-			//XYZ majorDirection = new XYZ(0, 1, 0);
+			IList<Curve> curveArray = GetCurveArray(rebarArea, majorDirection);
 			ElementId areaReinforcementTypeId = rebarArea.AreaReinforcementType.Id;
 
 			ElementId rebarBarTypeId;
@@ -61,9 +57,6 @@ namespace FloorAreaReinforcement.Models
 			}
 		}
 
-		// TODO: Поправить GetCurveArray в зависемости от direction
-		// TODO: продольный защитный слой
-
 		// Получение контура армирования из аналитической модели плиты
 		static IList<Curve> GetCurveArray(Element e)
 		{
@@ -78,7 +71,82 @@ namespace FloorAreaReinforcement.Models
 			return curves;
 		}
 
-		// TODO: Поправить GetMajorDirection в зависемости от direction
+		static IList<Curve> GetCurveArray(RebarArea rebarArea, XYZ majorDirection)
+		{
+			Floor floor = rebarArea.Host;
+
+			AnalyticalModel analyticalModel = floor.GetAnalyticalModel() as AnalyticalModel;
+			if (null == analyticalModel)
+			{
+				throw new Exception("Не удалось получить аналитическую модель");
+			}
+
+			IList<Curve> curves = analyticalModel.GetCurves(AnalyticalCurveType
+				.ActiveCurves);
+
+			List<Line> lines = new List<Line>();
+			foreach (Line line in curves)
+			{
+				if (rebarArea.Direction == Direction.TopMajor ||
+					rebarArea.Direction == Direction.BottomMajor)
+				{
+					if ((line.Direction.X.EqualTo(majorDirection.X, epsilon)
+						&&
+						line.Direction.Y.EqualTo(majorDirection.Y, epsilon))
+						||
+						(line.Direction.Negate().X.EqualTo(majorDirection.X, epsilon)
+						&&
+						line.Direction.Negate().Y.EqualTo(majorDirection.Y, epsilon)))
+					{
+						lines.Add(line);
+					}
+				}
+
+				if (rebarArea.Direction == Direction.TopMinor ||
+					rebarArea.Direction == Direction.BottomMinor)
+				{
+					if ((line.Direction.X.EqualTo(majorDirection.Negate().Y, epsilon)
+						&&
+						line.Direction.Y.EqualTo(majorDirection.X, epsilon))
+						||
+						(line.Direction.Negate().X.EqualTo(majorDirection.Negate().Y, epsilon)
+						&&
+						line.Direction.Negate().Y.EqualTo(majorDirection.X, epsilon)))
+					{
+						lines.Add(line);
+					}
+				}
+			}
+
+			// TODO: Перед получением точек линии нужно сместить на продольный защитный слой
+
+			List<XYZ> points = new List<XYZ>();
+			double offset = (rebarArea.AlongRebarCover * mmToft) - (rebarArea.RebarBarType.BarDiameter / 2);
+			foreach (Line line in lines)
+			{
+				points.Add(AddAlongRebarCover(line.GetEndPoint(0), line.Direction, offset));
+				points.Add(AddAlongRebarCover(line.GetEndPoint(1), line.Direction, offset));
+			}
+
+			IList<Curve> newLines = new List<Curve>();
+			XYZ q = points[points.Count - 1];
+			foreach (XYZ p in points)
+			{
+				newLines.Add(Line.CreateBound(q, p));
+				q = p;
+			}
+			return newLines;
+		}
+
+		private static XYZ AddAlongRebarCover(XYZ point, XYZ lineDirection, double offset)
+		{
+			XYZ p = new XYZ(
+				point.X - (lineDirection.Y * offset),
+				point.Y + (lineDirection.X * offset),
+				point.Z);
+			return p;
+		}
+
 		// Получение главного направления армирования
 		public static XYZ GetMajorDirection(Element e)
 		{
@@ -91,7 +159,7 @@ namespace FloorAreaReinforcement.Models
 			IList<Curve> curves = analyticalModel.GetCurves(AnalyticalCurveType
 				.ActiveCurves);
 
-			XYZ direction = new XYZ(0, 1, 0);
+			XYZ direction = XYZ.BasisY;
 
 			List<Line> lines = new List<Line>();
 
