@@ -23,39 +23,34 @@ namespace FloorAreaReinforcement.Models
 		public static AreaReinforcement Create(Models.RebarArea rebarArea,
 			XYZ majorDirection)
 		{
-			Document doc = rebarArea.Document;
-			Element hostElement = rebarArea.Host;
-
-			//IList<Curve> curveArray = GetCurveArray(rebarArea, majorDirection);
-			IList<Curve> curveArray = GetCurveArray2(rebarArea, majorDirection);
-
-			ElementId areaReinforcementTypeId = rebarArea.AreaReinforcementType.Id;
-			ElementId rebarBarTypeId;
-			if (rebarArea.RebarBarType != null)
+			if (null == rebarArea.RebarBarType)
 			{
-				rebarBarTypeId = rebarArea.RebarBarType.Id;
+				throw new Exception(string.Format("{0} - не выбран типоразмер арматуры",
+					rebarArea.AreaReinforcementType.Name));
 			}
 			else
 			{
-				throw new Exception(
-					string.Format("{0} - не выбран типоразмер арматуры",
-					rebarArea.AreaReinforcementType.Name));
-			}
+				Document doc = rebarArea.Document;
+				Element hostElement = rebarArea.Host;
+				//IList<Curve> curveArray = GetCurveArray(rebarArea, majorDirection);
+				IList<Curve> curveArray = GetCurveArray2(rebarArea, majorDirection);
+				ElementId areaReinforcementTypeId = rebarArea.AreaReinforcementType.Id;
+				ElementId rebarBarTypeId = rebarArea.RebarBarType.Id;
+				ElementId rebarHookTypeId = ElementId.InvalidElementId;
 
-			ElementId rebarHookTypeId = ElementId.InvalidElementId;
+				using (Transaction t = new Transaction(doc, "CreateAreaReinforcement"))
+				{
+					t.Start();
+					AreaReinforcement areaReinforcement = AreaReinforcement.Create(
+						doc, hostElement, curveArray, majorDirection,
+						areaReinforcementTypeId, rebarBarTypeId, rebarHookTypeId);
 
-			using (Transaction t = new Transaction(doc, "CreateAreaReinforcement"))
-			{
-				t.Start();
-				AreaReinforcement areaReinforcement = AreaReinforcement.Create(
-					doc, hostElement, curveArray, majorDirection,
-					areaReinforcementTypeId, rebarBarTypeId, rebarHookTypeId);
+					SetDirectionAndSpacing(areaReinforcement, rebarArea);
 
-				SetDirectionAndSpacing(areaReinforcement, rebarArea);
+					t.Commit();
 
-				t.Commit();
-
-				return areaReinforcement;
+					return areaReinforcement;
+				}
 			}
 		}
 
@@ -179,6 +174,10 @@ namespace FloorAreaReinforcement.Models
 				}
 			}
 
+			if (rebarArea.AlongRebarCover < 30)
+				throw new Exception(string.Format("{0} - отступ мешьше 30 мм",
+					rebarArea.AreaReinforcementType.Name));
+
 			List<XYZ> points = new List<XYZ>();
 			double offset = (rebarArea.AlongRebarCover * mmToft) - (rebarArea.RebarBarType.BarDiameter / 2);
 			foreach (Line line in lines)
@@ -213,7 +212,7 @@ namespace FloorAreaReinforcement.Models
 			AnalyticalModel analyticalModel = e.GetAnalyticalModel() as AnalyticalModel;
 			if (null == analyticalModel)
 			{
-				throw new Exception("Can't get AnalyticalModel from the selected Floor");
+				throw new Exception("Невозможно получить аналитическую модель перекрытия");
 			}
 
 			IList<Curve> curves = analyticalModel.GetCurves(AnalyticalCurveType
@@ -249,6 +248,11 @@ namespace FloorAreaReinforcement.Models
 			AreaReinforcement areaReinforcement, RebarArea rebarArea)
 		{
 			Direction direction = rebarArea.Direction;
+
+			if (rebarArea.Spacing < 100)
+				throw new Exception(string.Format("{0} - шаг арматуры мешьше 100 мм",
+					rebarArea.AreaReinforcementType.Name));
+
 			double rebarSpacing = rebarArea.Spacing * mmToft;
 
 			Parameter direction_top_major_X =

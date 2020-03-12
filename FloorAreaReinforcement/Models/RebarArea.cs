@@ -53,7 +53,6 @@ namespace FloorAreaReinforcement.Models
 			set { rebarBarType = value; }
 		}
 
-		// TODO: Проверку на больше 30?
 		double alongRebarCover = 50;
 		public double AlongRebarCover
 		{
@@ -61,7 +60,6 @@ namespace FloorAreaReinforcement.Models
 			set { alongRebarCover = value; }
 		}
 
-		// TODO: Проверку на больше 100
 		double spacing = 200;
 		public double Spacing
 		{
@@ -76,7 +74,7 @@ namespace FloorAreaReinforcement.Models
 
 		private Direction SetDirection(string areaReinforcementTypeName)
 		{
-			Models.Direction direction; 
+			Models.Direction direction;
 			switch (areaReinforcementTypeName)
 			{
 				case "Верхняя X":

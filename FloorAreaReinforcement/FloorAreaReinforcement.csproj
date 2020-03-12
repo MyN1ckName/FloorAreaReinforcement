@@ -53,6 +53,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="App.cs" />
     <Compile Include="Command.cs" />
     <Compile Include="Models\CreateRebarArea.cs" />
     <Compile Include="Models\Direction.cs" />
@@ -74,6 +75,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="FloorAreaReinforcement.addin" />
+    <Content Include="img\MainWindow.PNG" />
+    <Resource Include="img\icon.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

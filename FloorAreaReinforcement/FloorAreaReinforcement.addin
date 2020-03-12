@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<RevitAddIns>
+  <AddIn Type="Application">
+    <Assembly>FloorAreaReinforcement.dll</Assembly>
+    <ClientId>2D2687BA-C782-4EC4-A0B8-DDCD3B8769E2</ClientId>
+    <FullClassName>FloorAreaReinforcement.App</FullClassName>
+    <Name>FloorAreaReinforcement</Name>
+    <VendorId>Egorov.A</VendorId>
+    <VendorDescription>Egorov.A, www.github.com/MyN1ckName/FloorAreaReinforcement</VendorDescription>
+  </AddIn>
+</RevitAddIns>

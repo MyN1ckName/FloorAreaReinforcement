@@ -8,6 +8,8 @@ using System.Windows;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
+
+
 using Autodesk.Revit.DB;
 using Autodesk.Revit.DB.Architecture;
 using Autodesk.Revit.UI;
@@ -84,7 +86,7 @@ namespace FloorAreaReinforcement.Windows.MainWundow
 							{
 								if (rebarArea.IsChecked)
 								{
-									Models.CreateRebarArea.Create(rebarArea,majorDirection);
+									Models.CreateRebarArea.Create(rebarArea, majorDirection);
 								}
 							}
 							tg.Assimilate();
@@ -93,7 +95,8 @@ namespace FloorAreaReinforcement.Windows.MainWundow
 					}
 					catch (Exception ex)
 					{
-						MessageBox.Show(ex.Message, "Ошибка");
+						MessageBox.Show(ex.Message, "Что-то пошло не так:",
+							MessageBoxButton.OK, MessageBoxImage.Warning);
 					}
 				}));
 			}
@@ -111,10 +114,7 @@ namespace FloorAreaReinforcement.Windows.MainWundow
 						Window window = obj as Window;
 						window.Close();
 					}
-					catch (Exception ex)
-					{
-						MessageBox.Show(ex.Message, "Ошибка");
-					}
+					catch (Exception) { }
 				}));
 			}
 		}
