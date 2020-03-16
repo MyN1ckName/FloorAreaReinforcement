@@ -290,10 +290,16 @@ namespace FloorAreaReinforcement.Models
 					direction_top_minor_Y.Set(1);
 					direction_bottom_major_X.Set(0);
 					direction_bottom_minor_Y.Set(0);
+
 					Parameter spacing_top_minor_Y =
 						areaReinforcement.get_Parameter
 						(BuiltInParameter.REBAR_SYSTEM_SPACING_TOP_DIR_2);
 					spacing_top_minor_Y.Set(rebarSpacing);
+
+					Parameter add_top_cover =
+						areaReinforcement.get_Parameter
+						(BuiltInParameter.REBAR_SYSTEM_ADDL_TOP_OFFSET);
+					add_top_cover.Set(rebarArea.RebarBarType.BarDiameter);
 					break;
 
 				case Direction.BottomMajor:
@@ -318,6 +324,11 @@ namespace FloorAreaReinforcement.Models
 						areaReinforcement.get_Parameter
 						(BuiltInParameter.REBAR_SYSTEM_SPACING_BOTTOM_DIR_2);
 					spacing_bottom_minor_Y.Set(rebarSpacing);
+
+					Parameter add_bottom_cover =
+						areaReinforcement.get_Parameter
+						(BuiltInParameter.REBAR_SYSTEM_ADDL_BOTTOM_OFFSET);
+					add_bottom_cover.Set(rebarArea.RebarBarType.BarDiameter);
 					break;
 			}
 			return areaReinforcement;
