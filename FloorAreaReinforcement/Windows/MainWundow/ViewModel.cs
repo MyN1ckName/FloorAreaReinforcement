@@ -38,10 +38,10 @@ namespace FloorAreaReinforcement.Windows.MainWundow
 			ObservableCollection<Models.RebarArea> rebarAreaList =
 				new ObservableCollection<Models.RebarArea>()
 				{
-					new Models.RebarArea(floor, "Верхняя X"),
-					new Models.RebarArea(floor, "Верхняя Y"),
-					new Models.RebarArea(floor, "Нижняя X"),
-					new Models.RebarArea(floor, "Нижняя Y")
+					new Models.RebarArea(floor, "Верхняя X", Models.Direction.TopMajor),
+					new Models.RebarArea(floor, "Верхняя Y", Models.Direction.TopMinor),
+					new Models.RebarArea(floor, "Нижняя X", Models.Direction.BottomMajor),
+					new Models.RebarArea(floor, "Нижняя Y", Models.Direction.BottomMinor)
 				};
 			return rebarAreaList;
 		}

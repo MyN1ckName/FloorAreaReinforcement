@@ -19,14 +19,14 @@ namespace FloorAreaReinforcement.Models
 	{
 		Floor floor;
 		Direction direction;
-		public RebarArea(Floor floor, string areaReinforcementTypeName)
+		public RebarArea(Floor floor, string areaReinforcementTypeName, Direction direction)
 		{
 			this.floor = floor;
 			Document doc = floor.Document;
 			areaReinforcementType = SetAreaReinforcementType(doc,
 				areaReinforcementTypeName);
 			availableRebarBarType = GetAvailableRebarBarType(doc);
-			direction = SetDirection(areaReinforcementTypeName);
+			this.direction = direction;
 		}
 
 		public Document Document
@@ -70,30 +70,6 @@ namespace FloorAreaReinforcement.Models
 		public Direction Direction
 		{
 			get { return direction; }
-		}
-
-		private Direction SetDirection(string areaReinforcementTypeName)
-		{
-			Models.Direction direction;
-			switch (areaReinforcementTypeName)
-			{
-				case "Верхняя X":
-					direction = Direction.TopMajor;
-					break;
-				case "Верхняя Y":
-					direction = Direction.TopMinor;
-					break;
-				case "Нижняя X":
-					direction = Direction.BottomMajor;
-					break;
-				case "Нижняя Y":
-					direction = Direction.BottomMinor;
-					break;
-				default:
-					direction = Direction.Default;
-					break;
-			}
-			return direction;
 		}
 
 		// Назначение типаразмера армирования
